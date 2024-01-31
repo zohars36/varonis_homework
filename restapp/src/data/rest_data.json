@@ -1,0 +1,58 @@
+{
+  "resturants": [
+    {
+      "name": "Taco Haven",
+      "style": "Mexican",
+      "address": "456 Oak Avenue, Townsville",
+      "openHour": 10,
+      "closeHour": 20,
+      "vegetarian": "yes",
+      "does_deliveries": "yes"
+    },
+    {
+      "name": "Sushi Palace",
+      "style": "Japanese",
+      "address": "123 Main Street, Cityville",
+      "openHour": 11,
+      "closeHour": 22,
+      "vegetarian": "no",
+      "does_deliveries": "yes"
+    },
+    {
+      "name": "Burger Joint",
+      "style": "American",
+      "address": "789 Elm Road, Villagetown",
+      "openHour": 12,
+      "closeHour": 23,
+      "vegetarian": "no",
+      "does_deliveries": "yes"
+    },
+    {
+      "name": "Burger Italian",
+      "style": "Italian",
+      "address": "789 Elm Road, Italy",
+      "openHour": 12,
+      "closeHour": 24,
+      "vegetarian": "no",
+      "does_deliveries": "yes"
+    },
+    {
+      "name": "Burger Italian",
+      "style": "Italian",
+      "address": "111 Vizman Road, Italy",
+      "openHour": 12,
+      "closeHour": 22,
+      "vegetarian": "no",
+      "does_deliveries": "yes"
+    },
+    {
+      "name": "Sushi",
+      "style": "Asian",
+      "address": "111 Vizman Road, Japan",
+      "openHour": 12,
+      "closeHour": 22,
+      "vegetarian": "no",
+      "does_deliveries": "yes"
+    }
+  ]
+}

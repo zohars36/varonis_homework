@@ -1,0 +1,91 @@
+parameters:
+  - name: envType
+    displayName: env type
+    type: string
+    default: dev
+    values:
+      - dev
+      - staging
+      - prod
+
+  - name: instanceNo
+    displayName: instance number (1-9)?
+    type: string
+    default: "1"
+
+trigger: none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - group: rest-app-infra-group
+  - name: backendAzureRmKey
+    value: rest${{ parameters.envType }}no${{ parameters.instanceNo }}.terraform.tfstate
+  - name: workingDirectory
+    value: "$(Build.SourcesDirectory)/terraform/RestWebApp"
+
+stages:
+  - stage: validate
+    jobs:
+      - job: validate
+        continueOnError: false
+        steps:
+          - task: TerraformInstaller@1
+            displayName: terraform install
+            inputs:
+              terraformVersion: "latest"
+          - task: TerraformTaskV3@3
+            displayName: init
+            inputs:
+              provider: "azurerm"
+              command: "init"
+              backendServiceArm: "$(defaultServiceName)"
+              backendAzureRmResourceGroupName: "$(backendAzureRmResourceGroupName)"
+              backendAzureRmStorageAccountName: "$(backendAzureRmStorageAccountName)"
+              backendAzureRmContainerName: "$(backendAzureRmContainerName)"
+              backendAzureRmKey: "$(backendAzureRmKey)"
+              workingDirectory: "$(workingDirectory)"
+          - task: TerraformTaskV3@3
+            displayName: validate
+            inputs:
+              provider: "azurerm"
+              command: "validate"
+              workingDirectory: "$(workingDirectory)"
+  - stage: apply
+    condition: succeeded('validate')
+    dependsOn: validate
+    jobs:
+      - job: apply
+        steps:
+          - task: TerraformInstaller@1
+            displayName: terraform install
+            inputs:
+              terraformVersion: "latest"
+          - task: TerraformTaskV3@3
+            displayName: init
+            inputs:
+              provider: "azurerm"
+              command: "init"
+              backendServiceArm: "$(defaultServiceName)"
+              backendAzureRmResourceGroupName: "$(backendAzureRmResourceGroupName)"
+              backendAzureRmStorageAccountName: "$(backendAzureRmStorageAccountName)"
+              backendAzureRmContainerName: "$(backendAzureRmContainerName)"
+              backendAzureRmKey: "$(backendAzureRmKey)"
+              workingDirectory: "$(workingDirectory)"
+          - task: TerraformTaskV3@3
+            displayName: plan
+            inputs:
+              provider: "azurerm"
+              command: "plan"
+              commandOptions: '-var="env_type=${{ parameters.envType }}"  -var="instance_no=${{ parameters.instanceNo }}"'
+              environmentServiceNameAzureRM: "$(defaultServiceName)"
+              workingDirectory: "$(workingDirectory)"
+          - task: TerraformTaskV3@3
+            displayName: apply
+            inputs:
+              provider: "azurerm"
+              command: "apply"
+              commandOptions: '-var="env_type=${{ parameters.envType }}"  -var="instance_no=${{ parameters.instanceNo }}"'
+              environmentServiceNameAzureRM: "$(defaultServiceName)"
+              workingDirectory: "$(workingDirectory)"
